@@ -57,6 +57,11 @@ namespace HaulageApp
             builder.Services.AddSingleton<AllNotesPage>();
             builder.Services.AddTransient<NotePage>();
 
+            builder.Services.AddLogging(logging =>
+            {
+                logging.AddDebug();
+            });
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

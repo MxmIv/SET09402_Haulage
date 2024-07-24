@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using HaulageApp.Models;
 using HaulageApp.Data;
+using Microsoft.Extensions.Logging;
 
 namespace HaulageApp.ViewModels
 {
@@ -38,52 +39,87 @@ namespace HaulageApp.ViewModels
 
         private Note _note;
         private HaulageDbContext _context;
+        private readonly ILogger<NoteViewModel> _logger;
 
-        public NoteViewModel(HaulageDbContext notesDbContext)
+        public NoteViewModel(HaulageDbContext notesDbContext, ILogger<NoteViewModel> logger)
         {
             _context = notesDbContext;
             _note = new Note();
+            _logger = logger;
         }
 
-        public NoteViewModel(HaulageDbContext notesDbContext, Note note)
+        public NoteViewModel(HaulageDbContext notesDbContext, Note note, ILogger<NoteViewModel> logger)
         {
             _note = note;
             _context = notesDbContext;
+            _logger = logger;
         }
 
         [RelayCommand]
         private async Task Save()
         {
-            _note.CreatedAt = DateTime.Now;
-            if (_note.Id == 0)
+            try
             {
-                _context.Notes.Add(_note);
+                _note.CreatedAt = DateTime.Now;
+                if (_note.Id == 0)
+                {
+                    _context.Notes.Add(_note);
+                }
+                _context.SaveChanges();
+                _logger.LogInformation($"Note saved: {_note.Id}");
+                await Shell.Current.GoToAsync($"..?saved={_note.Id}");
             }
-            _context.SaveChanges();
-            await Shell.Current.GoToAsync($"..?saved={_note.Id}");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving note");
+                await Shell.Current.DisplayAlert("Error", $"An error occurred while saving the note. {ex.Message}", "OK");
+            }
         }
 
         [RelayCommand]
         private async Task Delete()
         {
-            _context.Remove(_note);
-            _context.SaveChanges();
-            await Shell.Current.GoToAsync($"..?deleted={_note.Id}");
+            try
+            {
+                _context.Remove(_note);
+                _context.SaveChanges();
+                _logger.LogInformation($"Note deleted: {_note.Id}");
+                await Shell.Current.GoToAsync($"..?deleted={_note.Id}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting note");
+                await Shell.Current.DisplayAlert("Error", $"An error occurred while deleting the note. {ex.Message}", "OK");
+            }
         }
 
         void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
         {
             if (query.ContainsKey("load"))
             {
-                _note = _context.Notes.Single(n => n.Id == int.Parse(query["load"].ToString()));
-                RefreshProperties();
+                try
+                {
+                    _note = _context.Notes.Single(n => n.Id == int.Parse(query["load"].ToString()));
+                    RefreshProperties();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error loading note");
+                }
             }
         }
 
         public void Reload()
         {
-            _context.Entry(_note).Reload();
-            RefreshProperties();
+            try
+            {
+                _context.Entry(_note).Reload();
+                RefreshProperties();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reloading note");
+            }
         }
 
         private void RefreshProperties()
