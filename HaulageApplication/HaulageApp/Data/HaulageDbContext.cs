@@ -3,12 +3,12 @@ using HaulageApp.Models;
 
 namespace HaulageApp.Data
 {
-    public class HaulageDbContext: DbContext
+    public class HaulageDbContext : DbContext
     {
-        public HaulageDbContext()
-        { }
-        public HaulageDbContext(DbContextOptions options) : base(options)
-        { }
+        public HaulageDbContext(DbContextOptions<HaulageDbContext> options)
+            : base(options)
+        {
+        }
 
         public DbSet<Note> Notes { get; set; }
     }

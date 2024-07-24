@@ -8,5 +8,7 @@ public partial class NotePage : ContentPage
     {
         this.BindingContext = viewModel;   
         InitializeComponent();
+        Console.WriteLine("NotePage initialized");
+
     }
 }

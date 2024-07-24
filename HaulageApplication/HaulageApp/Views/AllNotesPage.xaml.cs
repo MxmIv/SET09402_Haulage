@@ -8,6 +8,8 @@ public partial class AllNotesPage : ContentPage
     {
         this.BindingContext = viewModel;   
         InitializeComponent();
+        Console.WriteLine("AllNotesPage initialized");
+
     }
     
     private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)

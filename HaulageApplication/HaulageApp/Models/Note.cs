@@ -1,11 +1,22 @@
-using SQLite;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HaulageApp.Models;
-
-public class Note
+namespace HaulageApp.Models
 {
-    [PrimaryKey, AutoIncrement]
-    public int Id { get; set; }
-    public string Text { get; set; }
-    public DateTime Date { get; set; }
+    public class Note
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string Title { get; set; }
+
+        [Required]
+        public string Content { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+    }
 }
