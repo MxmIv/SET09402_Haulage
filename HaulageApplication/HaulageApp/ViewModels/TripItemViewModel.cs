@@ -18,7 +18,6 @@ namespace HaulageApp.ViewModels
         private string _tempEndTimeString;
         
         public ICommand GoToExpensesCommand { get; set; }
-        public ICommand GoToEventsCommand { get; set; }
 
         public TripItemViewModel(Trip trip, HaulageDbContext context)
         {
@@ -42,7 +41,6 @@ namespace HaulageApp.ViewModels
             });
             
             GoToExpensesCommand = new AsyncRelayCommand(GoToExpensesAsync);
-            GoToEventsCommand = new AsyncRelayCommand(GoToEventsAsync);
         }
 
         public int TripId => _trip.Id;
@@ -50,12 +48,6 @@ namespace HaulageApp.ViewModels
         private async Task GoToExpensesAsync()
         {
             await Shell.Current.GoToAsync("expenses",
-                new Dictionary<string, object> { { "trip", _trip } });
-        }
-        
-        private async Task GoToEventsAsync()
-        {
-            await Shell.Current.GoToAsync("events",
                 new Dictionary<string, object> { { "trip", _trip } });
         }
 

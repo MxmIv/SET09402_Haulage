@@ -61,12 +61,6 @@ public static class MauiProgram
         builder.Services.AddTransient<EditExpenseViewModel>();
         builder.Services.AddTransient<EditExpensePage>();
         
-        builder.Services.AddTransient<EventViewModel>();
-        builder.Services.AddTransient<EventPage>();
-        
-        builder.Services.AddTransient<AllEventsViewModel>();
-        builder.Services.AddTransient<AllEventsPage>();
-        
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<SettingsPage>();
         
